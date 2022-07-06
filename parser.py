@@ -31,12 +31,10 @@ def findFuckingGroup(table, group : str) -> dict or None:
                 
                 while (re.search(r'\d{1,2}\.\d{1,2}\.\d{2,4}', table_rows[i].prettify()) is None) and (i < len(table_rows)):
                     table_data = table_rows[i].findAll('td')
-                    #
                     number_raw = table_data[0::3]
                     couple_raw = table_data[1::3]
                     cabinet_raw = table_data[2::3]
 
-                    #result: словарь; ключ - номер пары, значение - словарь(ключ - пара с преподом, значение - номер кабинета)
                     number = re.search(r'<strong>(\d+)', str(number_raw[column]))[1]
                     couple = re.search(r'<p>(.+)</p>', str(couple_raw[column]))[1].replace('<br/>', ',')
                     cabinet = re.search(r'<p>(.+)</p>', str(cabinet_raw[column]))[1].replace('<br/>', ',')

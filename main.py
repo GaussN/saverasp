@@ -9,13 +9,12 @@ FAILURE_CHECK_UPDATE_TIME = 1800    # время сна после неудач�
 FIND_GROUP = 46
 
 def main():
-    #schedule_old = getSchedule().text
     schedule_old = ''
     while True:
         now = datetime.now()
         delay_time = 0
 
-        print('Сheck schedule update')
+        print(now, 'Сheck schedule update')
 
         schedule = getSchedule()
 
@@ -25,8 +24,7 @@ def main():
             print(now, 'new schedule')
             
             schedule_json = json.dumps(schedule_dict, ensure_ascii=False)
-            print(schedule_json)
-
+            
             #запись в файл
             with open(f'output/{date.today()}.json', 'w+', encoding='utf-8') as file:
                 file.write(schedule_json)
