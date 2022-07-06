@@ -3,11 +3,11 @@
 from requests import get  
 from bs4 import BeautifulSoup as parser
 
-mgke = 'http://mgke.minsk.edu.by/ru/main.aspx?guid=3831'
+MGKE = 'http://mgke.minsk.edu.by/ru/main.aspx?guid=3831'
 
 def getSchedule():
     try:
-        response = get(mgke)
+        response = get(MGKE)
         soup = parser(response.text, "html.parser")
         return soup.table
     except Exception as e:

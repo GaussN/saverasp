@@ -1,0 +1,46 @@
+import json
+from time     import sleep
+from datetime import datetime, date
+from get      import getSchedule
+from parser   import findFuckingGroup
+
+SUCCESS_CHECK_UPDATE_TIME = 43200   # время сна после удачного обновления расписания 
+FAILURE_CHECK_UPDATE_TIME = 1800    # время сна после неудачного обновления расписания 
+FIND_GROUP = 46
+
+def main():
+    #schedule_old = getSchedule().text
+    schedule_old = ''
+    while True:
+        now = datetime.now()
+        delay_time = 0
+
+        print('Сheck schedule update')
+
+        schedule = getSchedule()
+
+        if schedule_old != schedule.text:
+            schedule_old = schedule.text
+            schedule_dict = findFuckingGroup(schedule, str(FIND_GROUP))
+            print(now, 'new schedule')
+            
+            schedule_json = json.dumps(schedule_dict, ensure_ascii=False)
+            print(schedule_json)
+
+            #запись в файл
+            with open(f'output/{date.today()}.json', 'w+', encoding='utf-8') as file:
+                file.write(schedule_json)
+                print(now, 'schedule successfully written to file')
+
+            delay_time = SUCCESS_CHECK_UPDATE_TIME
+            
+        else:
+            print(now, 'nothing new')
+            delay_time = FAILURE_CHECK_UPDATE_TIME
+            
+        sleep(delay_time)
+
+        
+
+if __name__ == '__main__':
+    main()
