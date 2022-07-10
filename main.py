@@ -4,8 +4,8 @@ from datetime import datetime, date
 from get import getSchedule
 from parser import findGroupSchedule
 
-# SUCCESS_CHECK_UPDATE_TIME = 43200   # время сна после   удачного обновления расписания
-SUCCESS_CHECK_UPDATE_TIME = 60 * 5  # время сна после   удачного обновления расписания
+# SUCCESS_CHECK_UPDATE_TIME = 43200   # время сна после удачного обновления расписания
+SUCCESS_CHECK_UPDATE_TIME = 60 * 5  # время сна после удачного обновления расписания
 FAILURE_CHECK_UPDATE_TIME = 1800  # время сна после неудачного обновления расписания
 FIND_GROUP = 46
 
