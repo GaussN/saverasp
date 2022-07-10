@@ -1,16 +1,18 @@
 import json
 from time import sleep
 from datetime import datetime, date
+import sys
+from pkg_resources import parse_requirements
 from get import getSchedule
 from parser import findGroupSchedule
+import threading
 
 # SUCCESS_CHECK_UPDATE_TIME = 43200   # время сна после удачного обновления расписания
 SUCCESS_CHECK_UPDATE_TIME = 60 * 5  # время сна после удачного обновления расписания
 FAILURE_CHECK_UPDATE_TIME = 1800  # время сна после неудачного обновления расписания
 FIND_GROUP = 46
 
-
-def main():
+def main():  
     schedule_old = ''
     while True:
         now = datetime.now()
@@ -43,4 +45,12 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+
+    parse_thread = threading.Thread(target=main)
+    parse_thread.daemon = True
+    parse_thread.start()
+
+    while True:
+        cmd = input()
+        if cmd in ['e', 'exit', 'quit', 'stop']:
+            sys.exit(0)
