@@ -72,5 +72,5 @@ if __name__ == '__main__':
             print('''
 Type: "e" or "exit" to stop the process
 Type "help" to get help
-Type "set (SUT/FUT) VAL" to set value SUCCESS_CHECK_UPDATE_TIME/FAILURE_CHECK_UPDATE_TIME
+Type "set SUT(FUT) VAL" to set value SUCCESS_CHECK_UPDATE_TIME(FAILURE_CHECK_UPDATE_TIME)
 ''')

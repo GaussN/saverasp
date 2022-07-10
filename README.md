@@ -1,3 +1,5 @@
 # saverasp
-a useless application that can parse the college website and save the schedule of a certain group
+****
+##### полурабочий скрипт для получения расписания с сайта колледжа.
 
+не работает разбиение пар на подгруппы.
