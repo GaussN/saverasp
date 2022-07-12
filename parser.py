@@ -1,18 +1,17 @@
 import re
 import json
+from unicodedata import numeric
 from get import getSchedule
 
 
 def findGroupSchedule(table, group: str) -> dict or None:
     result = {}
 
-    findGroupFlag = False # найдена группа или нет
-
     table_rows = table.findAll('tr')
     i = 0
 
     while i < len(table_rows):
-        date = re.search(r"\d{1,2}\.\d{1,2}\.\d{2,4}", table_rows[i].prettify())  # нахождение даты
+        date = re.search(r"\d{1,2}\.\d{1,2}\.\d{2,4}", table_rows[i].prettify())  # поиск даты
 
         if date is not None:
             result['date'] = date[0]
@@ -23,8 +22,6 @@ def findGroupSchedule(table, group: str) -> dict or None:
             groups = re.findall(r"<strong>\s*(\d+)", table_rows[i].prettify());
 
             if group in groups:
-                findGroupFlag = True
-
                 # номер колнки с парами группы
                 column = groups.index(group)
                 # после строки с номерами групп идес строка с бесполезным шлаком
@@ -32,28 +29,62 @@ def findGroupSchedule(table, group: str) -> dict or None:
 
                 while (i < len(table_rows)) and (re.search(r'\d{1,2}\.\d{1,2}\.\d{2,4}', table_rows[i].prettify()) is None):
                     table_data = table_rows[i].findAll('td')
-                    number_raw = table_data[0::3]
-                    couple_raw = table_data[1::3]
-                    cabinet_raw = table_data[2::3]
-
-                    number_sell = re.search(r'<strong>(\d+)', str(number_raw[column]))[1]
-                    couple_sell = re.search(r'<p>(.+)</p>', str(couple_raw[column]))[1]
-                    cabinet_sell = re.search(r'<p>(.+)</p>', str(cabinet_raw[column]))[1]
-
-                    if couple_sell != None:
-                        
-                        #тут будут проверка на наличие подгрупп и тд и тп
-                        
-                        result[number_sell] = {'couple': 'couple_name', 'teacher': 'couple_teacher', 'cabinet': cabinet_sell}
-
+                    
+                    number = table_data[0::3][column].strong.text.strip()
+                    couple = table_data[1::3][column].p.text.strip()
+                    cabinet = table_data[2::3][column].p.text.strip()
+                    # для очистки от двойных пробелов и новых строк 
+                    number = number.replace('\n', '')
+                    couple = ' '.join(couple.replace('\n', ' ').split())
+                    cabinet = ' '.join(cabinet.replace('\n', ' ').split())
+                    #b pfxtv z htuekzhrb bcgjkmpjdfk
+                    # ⠟⠛⠉⠉⠉⠉⠉⠉⠙⠛⠻⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠉⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠙⠻⣿⣿⣿⣿⣿⣿
+                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⢻⣿⣿⣿⣿
+                    # ⠄⠄⠄⠄⠄⢀⣀⣀⣀⣀⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄⢻⣿⣿⣿
+                    # ⠄⠄⠄⠉⠉⠉⠄⣀⣀⣀⡈⠉⠛⠛⠛⠉⠉⠲⠄⠄⠄⣿⣿⣿
+                    # ⠠⠤⠤⠔⠒⠋⠉⠄⠄⠄⠈⠉⠒⠒⠒⠒⠒⠂⠄⠄⠄⢻⣿⣿
+                    # ⠄⠄⢀⠤⠐⠒⠒⠒⠒⠂⠄⠄⠄⠄⠄⠐⠒⠒⠒⢄⠄⠄⢿⣿
+                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⠆⠄⠄⠄⠄⢰⠄⠄⠄⠄⠄⠄⢸⣿
+                    # ⠄⠄⠄⢠⡖⢲⣶⣶⣤⡀⠄⠄⠄⠄⠄⠈⢀⣤⣤⣤⡀⠄⢸⣿
+                    # ⠄⠄⠄⠈⠙⠚⠛⠛⠓⠃⠄⠄⠄⠄⠄⠄⠧⠤⢿⣿⡇⠄⢸⣿
+                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢰⡆⠄⠄⠄⠄⠄⠄⠄⣿
+                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠳⡀⠄⠄⠄⠄⠄⠄⢸
+                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⡤⠤⠄⠄⠄⠄⠄⢘⡆⠄⠄⠄⠄⢠⣿
+                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠻⣤⠄⠴⠆⠠⣄⡞⠄⠄⠄⠄⢀⣾⣿
+                    # ⣆⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⣾⣿⣿
+                    # ⠈⠳⣄⠄⠄⠄⠄⠄⠖⠒⠶⠤⠤⠤⠤⠤⢤⠄⠄⢀⣿⣿⣿⣿
+                    # ⠄⠄⠈⠑⢦⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣼⣿⣿⣿⣿
+                    # ⠄⠄⠄⠄⠄⠙⢦⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄⣠⣿⣿⣿⣿⣿⣿
+                    # ⠄⠄⠄⠄⠄⠄⠄⠈⠓⠲⠤⠤⠤⣤⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿
+                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠣⡀⠄⠄⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠉⠉⠉⠉⠉⠉⠛⠛
+                    # ⠄⠄⠈⠉⠑⢆⣀⡔⠈⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄
+                    
+                    
+                    # проверка будет, но не сейчас
+                    print(f'{number}\n{couple}\n{cabinet}')
+                    #result[number]={"couple":[1группа, 2группа], "teacher":[...]}
+                
                     i += 1
-                break
+                return result
         i += 1
-    return result if findGroupFlag else None
+    return None
 
+
+from bs4 import BeautifulSoup as parser
 
 if __name__ == '__main__':
-    couples = findGroupSchedule(getSchedule(), '46')
-    couplesJson = json.dumps(couples, ensure_ascii=False)
-    print(couples)
-    print(couplesJson)
+    #на сайте расписания боольше нет
+    #остается использовать сохраненное  
+    print('.htm')
+    with open('output\.htm', 'r', encoding='utf-8') as file:
+        table = parser(file.read(), "html.parser").table
+        couples = findGroupSchedule(table, '44')
+        #print(couples)
+    print('timetable.html')
+    with open('output\\timetable.html', 'r', encoding='utf-8') as file:
+        table = parser(file.read(), "html.parser").table
+        couples = findGroupSchedule(table, '44')
+        #print(couples)

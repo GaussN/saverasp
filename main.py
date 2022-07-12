@@ -11,22 +11,27 @@ from parser import findGroupSchedule
 SUCCESS_CHECK_UPDATE_TIME = 60 * 5  # время сна после удачного обновления расписания
 FAILURE_CHECK_UPDATE_TIME = 1800  # время сна после неудачного обновления расписания
 FIND_GROUP = 44
-
+        
 def main():  
     schedule_old = ''
     while True:
         now = datetime.now()
         delay_time = 0
 
-        print(now, 'Сheck schedule update')
+        print(f' {now} Сheck schedule update')
 
         schedule = getSchedule()
+
+        if schedule is None:
+            print(f'\033[101;93m {now} No schedule. Restart the program\033[0m') 
+            break
+        
 
         if schedule_old != schedule.text:
             schedule_old = schedule.text
             schedule_dict = findGroupSchedule(schedule, str(FIND_GROUP))
             if schedule_dict is not None:
-                print(now, 'new schedule')
+                print(f'\033[102;97m {now} New schedule\033[0m')
 
                 schedule_json = json.dumps(schedule_dict, ensure_ascii=False)
                 delay_time = SUCCESS_CHECK_UPDATE_TIME
@@ -34,21 +39,20 @@ def main():
                 # запись в файл
                 with open(f'output/{date.today()}.json', 'w+', encoding='utf-8') as file:
                     file.write(schedule_json)
-                    print(now, 'schedule successfully written to file')
+                    print(f'\033[1092;97m Schedule successfully written to file\033[0m')
             else:
-                print('no schedule found for the selected group')
+                print('\033[103;97m No schedule found for the selected group\033[0m')
                 delay_time = FAILURE_CHECK_UPDATE_TIME
 
 
         else:
-            print(now, 'nothing new')
+            print(now, '\033[3mnothing new\033[0m')
             delay_time = FAILURE_CHECK_UPDATE_TIME
 
         sleep(delay_time)
 
 
 if __name__ == '__main__':
-
     parse_thread = threading.Thread(target=main)
     parse_thread.daemon = True
     parse_thread.start()
