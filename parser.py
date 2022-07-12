@@ -1,6 +1,6 @@
-from get import getSchedule
-import json
 import re
+import json
+from get import getSchedule
 
 
 def findGroupSchedule(table, group: str) -> dict or None:
@@ -36,18 +36,15 @@ def findGroupSchedule(table, group: str) -> dict or None:
                     couple_raw = table_data[1::3]
                     cabinet_raw = table_data[2::3]
 
-                    number = re.search(r'<strong>(\d+)', str(number_raw[column]))[1]
-                    couple = re.search(r'<p>(.+)</p>', str(couple_raw[column]))[1]
-                    cabinet = re.search(r'<p>(.+)</p>', str(cabinet_raw[column]))[1]
+                    number_sell = re.search(r'<strong>(\d+)', str(number_raw[column]))[1]
+                    couple_sell = re.search(r'<p>(.+)</p>', str(couple_raw[column]))[1]
+                    cabinet_sell = re.search(r'<p>(.+)</p>', str(cabinet_raw[column]))[1]
 
-                    #TODO: проверка на разделение пары на подгруппы 
-                    # 💩 <- тут насранно
-
-                    couple_m = re.search(r'(.+\))(.+)', couple);  # не работает если пара разделена на подгруппы
-                    if couple_m is not None:
-                        couple_name = couple_m[1]  
-                        couple_teacher = couple_m[2]  
-                        result[number] = {'para': couple_name, 'teacher': couple_teacher, 'kabinet': cabinet}
+                    if couple_sell != None:
+                        
+                        #тут будут проверка на наличие подгрупп и тд и тп
+                        
+                        result[number_sell] = {'couple': 'couple_name', 'teacher': 'couple_teacher', 'cabinet': cabinet_sell}
 
                     i += 1
                 break
@@ -56,7 +53,7 @@ def findGroupSchedule(table, group: str) -> dict or None:
 
 
 if __name__ == '__main__':
-    couples = findGroupSchedule(getSchedule(), '44')
+    couples = findGroupSchedule(getSchedule(), '46')
     couplesJson = json.dumps(couples, ensure_ascii=False)
     print(couples)
     print(couplesJson)
