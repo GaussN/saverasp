@@ -4,7 +4,7 @@ from unicodedata import numeric
 from get import getSchedule
 
 
-def findGroupSchedule(table, subgoup: str) -> dict or None:
+def findGroupSchedule(table, group: str) -> dict or None:
     result = {}
 
     table_rows = table.findAll('tr')
@@ -19,11 +19,11 @@ def findGroupSchedule(table, subgoup: str) -> dict or None:
             # после строки с датой идёт строка с номерами групп
             # i указывает на строку с номерами групп
             i += 1
-            subgroups = re.findall(r"<strong>\s*(\d+)", table_rows[i].prettify());
+            groups = re.findall(r"<strong>\s*(\d+)", table_rows[i].prettify());
 
-            if subgoup in subgroups:
+            if group in groups:
                 # номер колнки с парами группы
-                column = subgroups.index(subgoup)
+                column = groups.index(group)
                 # после строки с номерами групп идес строка с бесполезным шлаком
                 i += 2
 
@@ -45,10 +45,11 @@ def findGroupSchedule(table, subgoup: str) -> dict or None:
                     if len(subgroups := re.findall(r'\d\.\D+', couple)) != 0:
                         result[number]=[]
                         cabinets = cabinet.split(' ')
-                        for subgoup in subgroups:
-                            #couple_f - то массив с номеров подгруппы, назавнием пары и ФИО препода 
-                            couple_f = re.search(r'(\d+)\.(.+)\(.+\)(.+)', subgoup)
-                            result[number].append({'subgroup': couple_f[1], "couple": couple_f[2], "teacher": couple_f[3], "cabinet": cabinets[int(couple_f[1])-1]})
+                        j = 0
+                        while j < len(subgroups):
+                            couple_f = re.search(r'(\d+)\.(.+)\(.+\)(.+)', subgroups[j])
+                            result[number].append({'subgroup': couple_f[1], "couple": couple_f[2], "teacher": couple_f[3], "cabinet": cabinets[j]})
+                            j += 1
                     else:
                         couple = re.match(r'(.+)\(.+\)(.+)', couple)
                         result[number]=[{'subgroup': '0', "couple": couple[1], "teacher": couple[2], "cabinet": cabinet}]
