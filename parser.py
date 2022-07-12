@@ -48,7 +48,7 @@ def findGroupSchedule(table, group: str) -> dict or None:
                         j = 0
                         while j < len(subgroups):
                             couple_f = re.search(r'(\d+)\.(.+)\(.+\)(.+)', subgroups[j])
-                            result[number].append({'subgroup': couple_f[1], "couple": couple_f[2], "teacher": couple_f[3], "cabinet": cabinets[j]})
+                            result[number].append({'subgroup': couple_f[1].strip(), "couple": couple_f[2].strip(), "teacher": couple_f[3].strip(), "cabinet": cabinets[j]})
                             j += 1
                     else:
                         couple = re.match(r'(.+)\(.+\)(.+)', couple)
