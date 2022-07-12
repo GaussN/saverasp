@@ -4,7 +4,7 @@ from unicodedata import numeric
 from get import getSchedule
 
 
-def findGroupSchedule(table, group: str) -> dict or None:
+def findGroupSchedule(table, subgoup: str) -> dict or None:
     result = {}
 
     table_rows = table.findAll('tr')
@@ -19,11 +19,11 @@ def findGroupSchedule(table, group: str) -> dict or None:
             # после строки с датой идёт строка с номерами групп
             # i указывает на строку с номерами групп
             i += 1
-            groups = re.findall(r"<strong>\s*(\d+)", table_rows[i].prettify());
+            subgroups = re.findall(r"<strong>\s*(\d+)", table_rows[i].prettify());
 
-            if group in groups:
+            if subgoup in subgroups:
                 # номер колнки с парами группы
-                column = groups.index(group)
+                column = subgroups.index(subgoup)
                 # после строки с номерами групп идес строка с бесполезным шлаком
                 i += 2
 
@@ -37,36 +37,22 @@ def findGroupSchedule(table, group: str) -> dict or None:
                     number = number.replace('\n', '')
                     couple = ' '.join(couple.replace('\n', ' ').split())
                     cabinet = ' '.join(cabinet.replace('\n', ' ').split())
-                    #b pfxtv z htuekzhrb bcgjkmpjdfk
-                    # ⠟⠛⠉⠉⠉⠉⠉⠉⠙⠛⠻⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠉⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿
-                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠙⠻⣿⣿⣿⣿⣿⣿
-                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⢻⣿⣿⣿⣿
-                    # ⠄⠄⠄⠄⠄⢀⣀⣀⣀⣀⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄⢻⣿⣿⣿
-                    # ⠄⠄⠄⠉⠉⠉⠄⣀⣀⣀⡈⠉⠛⠛⠛⠉⠉⠲⠄⠄⠄⣿⣿⣿
-                    # ⠠⠤⠤⠔⠒⠋⠉⠄⠄⠄⠈⠉⠒⠒⠒⠒⠒⠂⠄⠄⠄⢻⣿⣿
-                    # ⠄⠄⢀⠤⠐⠒⠒⠒⠒⠂⠄⠄⠄⠄⠄⠐⠒⠒⠒⢄⠄⠄⢿⣿
-                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⠆⠄⠄⠄⠄⢰⠄⠄⠄⠄⠄⠄⢸⣿
-                    # ⠄⠄⠄⢠⡖⢲⣶⣶⣤⡀⠄⠄⠄⠄⠄⠈⢀⣤⣤⣤⡀⠄⢸⣿
-                    # ⠄⠄⠄⠈⠙⠚⠛⠛⠓⠃⠄⠄⠄⠄⠄⠄⠧⠤⢿⣿⡇⠄⢸⣿
-                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢰⡆⠄⠄⠄⠄⠄⠄⠄⣿
-                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠳⡀⠄⠄⠄⠄⠄⠄⢸
-                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⡤⠤⠄⠄⠄⠄⠄⢘⡆⠄⠄⠄⠄⢠⣿
-                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠻⣤⠄⠴⠆⠠⣄⡞⠄⠄⠄⠄⢀⣾⣿
-                    # ⣆⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⣾⣿⣿
-                    # ⠈⠳⣄⠄⠄⠄⠄⠄⠖⠒⠶⠤⠤⠤⠤⠤⢤⠄⠄⢀⣿⣿⣿⣿
-                    # ⠄⠄⠈⠑⢦⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣼⣿⣿⣿⣿
-                    # ⠄⠄⠄⠄⠄⠙⢦⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄⣠⣿⣿⣿⣿⣿⣿
-                    # ⠄⠄⠄⠄⠄⠄⠄⠈⠓⠲⠤⠤⠤⣤⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿
-                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠣⡀⠄⠄⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-                    # ⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠉⠉⠉⠉⠉⠉⠛⠛
-                    # ⠄⠄⠈⠉⠑⢆⣀⡔⠈⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄
                     
+                    if couple.strip() == '':
+                        i += 1
+                        continue
                     
-                    # проверка будет, но не сейчас
-                    print(f'{number}\n{couple}\n{cabinet}')
-                    #result[number]={"couple":[1группа, 2группа], "teacher":[...]}
-                
+                    if len(subgroups := re.findall(r'\d\.\D+', couple)) != 0:
+                        result[number]=[]
+                        cabinets = cabinet.split(' ')
+                        for subgoup in subgroups:
+                            #couple_f - то массив с номеров подгруппы, назавнием пары и ФИО препода 
+                            couple_f = re.search(r'(\d+)\.(.+)\(.+\)(.+)', subgoup)
+                            result[number].append({'subgroup': couple_f[1], "couple": couple_f[2], "teacher": couple_f[3], "cabinet": cabinets[int(couple_f[1])-1]})
+                    else:
+                        couple = re.match(r'(.+)\(.+\)(.+)', couple)
+                        result[number]=[{'subgroup': '0', "couple": couple[1], "teacher": couple[2], "cabinet": cabinet}]
+                        
                     i += 1
                 return result
         i += 1
@@ -82,9 +68,9 @@ if __name__ == '__main__':
     with open('output\.htm', 'r', encoding='utf-8') as file:
         table = parser(file.read(), "html.parser").table
         couples = findGroupSchedule(table, '44')
-        #print(couples)
+        print(couples)
     print('timetable.html')
     with open('output\\timetable.html', 'r', encoding='utf-8') as file:
         table = parser(file.read(), "html.parser").table
         couples = findGroupSchedule(table, '44')
-        #print(couples)
+        print(couples)
