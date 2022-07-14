@@ -13,13 +13,3 @@ def getSchedule():
         return soup.table
     except Exception as e:
         print('exception: ', e)
-
-
-if __name__ == '__main__':
-    try:
-        table = getSchedule()
-        print(table)
-        with open('output/timetable.html', 'w+', encoding='utf-8') as file:
-            file.write(table.prettify())
-    except:
-        pass

@@ -19,9 +19,3 @@ def errorLog(log: str):
 def log(log: str):
     date = datetime.datetime.now()  
     print(f'{Style.DIM}{date} {log}')
-    
-if __name__ == '__main__':
-    successLog("success")
-    warningLog("warning")
-    errorLog("error")
-    log("log")

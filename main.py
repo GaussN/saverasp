@@ -1,19 +1,19 @@
-from pprint import pprint
 import sys
 import json
 import threading
 from time import sleep
-from get import getSchedule
-from datetime import date
-from parser import findGroupSchedule
 from hashlib import md5
+from datetime import date
+from get import getSchedule
+from parser import findGroupSchedule
 
 from log import *
 
 #43200
 SUCCESS_CHECK_UPDATE_TIME = 60 * 5  # время сна после удачного обновления расписания
 FAILURE_CHECK_UPDATE_TIME = 1800  # время сна после неудачного обновления расписания
-FIND_GROUP = 44
+
+find_gorup : int = 44
 
 def main():
     schedule_old = ''
@@ -29,7 +29,7 @@ def main():
         #старое расписание хранится в виде хэша
         if schedule_old != md5(schedule.text.encode()):
             schedule_old = md5(schedule.text.encode())
-            schedule_dict = findGroupSchedule(schedule, str(FIND_GROUP))
+            schedule_dict = findGroupSchedule(schedule, str(find_gorup))
             if schedule_dict is not None:
                 successLog('New schedule')
 
@@ -53,28 +53,45 @@ def main():
 
 
 if __name__ == '__main__':
+    while True:
+        try:
+            find_gorup = int(input('enter group number: '))
+            break
+        except:
+            pass
+    
     parse_thread = threading.Thread(target=main)
     parse_thread.daemon = True
     parse_thread.start()
 
+
     while True:
         cmd = input()
-        if cmd.strip() in ['e', 'exit']:
+        if cmd.strip() in ['e', 'exit', 'q', 'quit']:
             sys.exit(0)
         elif cmd.split(' ')[0] == 'set':
             argv = cmd.split(' ')
             try:
-                #sunccess update time
                 if argv[1] == 'SUT':
                     SUCCESS_CHECK_UPDATE_TIME = int(argv[2])
-                #failure update time
+                    print(f'SUCCESS_CHECK_UPDATE_TIME = {argv[2]}')
                 elif argv[1] == 'FUT':
                     FAILURE_CHECK_UPDATE_TIME = int(argv[2])
+                    print(f'FAILURE_CHECK_UPDATE_TIME = {argv[2]}')
+                elif argv[1] == 'group':
+                    find_gorup = int(argv[2])
+                    print(f'group = {argv[2]}')
+                else:
+                    print('unknown value')
+            except IndexError:
+                print('not enough parameters')
             except Exception as ex:
                 print(ex)
         elif cmd == 'help':
             print('''
 Type: "e" or "exit" to stop the process
 Type "help" to get help
-Type "set SUT(FUT) VAL" to set value SUCCESS_CHECK_UPDATE_TIME(FAILURE_CHECK_UPDATE_TIME)
+Type "set SUT(FUT, group) VAL" to set value SUCCESS_CHECK_UPDATE_TIME(FAILURE_CHECK_UPDATE_TIME, group)
 ''')
+        else:
+            print('unknown command')
