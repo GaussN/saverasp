@@ -1,4 +1,5 @@
 import sys
+import log
 import json
 import threading
 from time import sleep
@@ -7,9 +8,6 @@ from datetime import date
 from get import getSchedule
 from parser import findGroupSchedule
 
-from log import *
-
-#43200
 SUCCESS_CHECK_UPDATE_TIME = 60 * 5  # время сна после удачного обновления расписания
 FAILURE_CHECK_UPDATE_TIME = 1800  # время сна после неудачного обновления расписания
 
@@ -23,7 +21,7 @@ def main():
         log('Сheck schedule update')
         schedule = getSchedule()
         if schedule is None:
-            errorLog('No schedule. Restart the program')
+            log.errorLog('No schedule. Restart the program')
             break
 
         #старое расписание хранится в виде хэша
@@ -31,7 +29,7 @@ def main():
             schedule_old = md5(schedule.text.encode()).hexdigest()
             schedule_dict = findGroupSchedule(schedule, str(find_gorup))
             if schedule_dict is not None:
-                successLog('New schedule')
+                log.successLog('New schedule')
 
                 schedule_json = json.dumps(schedule_dict, ensure_ascii=False)
                 delay_time = SUCCESS_CHECK_UPDATE_TIME
@@ -39,14 +37,14 @@ def main():
                 # запись в файл
                 with open(f'output/{date.today()}.json', 'w+', encoding='utf-8') as file:
                     file.write(schedule_json)
-                    successLog('Schedule successfully written to file')
+                    log.successLog('Schedule successfully written to file')
             else:
-                warningLog('No schedule found for the selected group')
+                log.warningLog('No schedule found for the selected group')
                 delay_time = FAILURE_CHECK_UPDATE_TIME
 
 
         else:
-            log('Nothing new')
+            log.log('Nothing new')
             delay_time = FAILURE_CHECK_UPDATE_TIME
 
         sleep(delay_time)

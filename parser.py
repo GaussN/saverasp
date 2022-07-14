@@ -64,8 +64,3 @@ if __name__ == '__main__':
         table = parser(file.read(), "html.parser").table
         couples = findGroupSchedule(table, '44')
         print(couples)
-    print('timetable.html')
-    with open('output\\timetable.html', 'r', encoding='utf-8') as file:
-        table = parser(file.read(), "html.parser").table
-        couples = findGroupSchedule(table, '46')
-        print(couples)
