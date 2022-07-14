@@ -25,10 +25,10 @@ def main():
         if schedule is None:
             errorLog('No schedule. Restart the program')
             break
-        
+
         #старое расписание хранится в виде хэша
-        if schedule_old != md5(schedule.text.encode()):
-            schedule_old = md5(schedule.text.encode())
+        if schedule_old != md5(schedule.text.encode().hexdigest()):
+            schedule_old = md5(schedule.text.encode()).hexdigest()
             schedule_dict = findGroupSchedule(schedule, str(find_gorup))
             if schedule_dict is not None:
                 successLog('New schedule')
@@ -52,14 +52,14 @@ def main():
         sleep(delay_time)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':    
     while True:
         try:
             find_gorup = int(input('enter group number: '))
             break
         except:
             pass
-    
+
     parse_thread = threading.Thread(target=main)
     parse_thread.daemon = True
     parse_thread.start()
