@@ -1,3 +1,4 @@
+from pprint import pprint
 import sys
 import json
 import threading
@@ -5,6 +6,7 @@ from time import sleep
 from get import getSchedule
 from datetime import date
 from parser import findGroupSchedule
+from hashlib import md5
 
 from log import *
 
@@ -12,23 +14,21 @@ from log import *
 SUCCESS_CHECK_UPDATE_TIME = 60 * 5  # время сна после удачного обновления расписания
 FAILURE_CHECK_UPDATE_TIME = 1800  # время сна после неудачного обновления расписания
 FIND_GROUP = 44
-        
-def main():  
+
+def main():
     schedule_old = ''
     while True:
         delay_time = 0
 
         log('Сheck schedule update')
-
         schedule = getSchedule()
-
         if schedule is None:
-            errorLog('No schedule. Restart the program') 
+            errorLog('No schedule. Restart the program')
             break
         
-
-        if schedule_old != schedule.text:
-            schedule_old = schedule.text
+        #старое расписание хранится в виде хэша
+        if schedule_old != md5(schedule.text.encode()):
+            schedule_old = md5(schedule.text.encode())
             schedule_dict = findGroupSchedule(schedule, str(FIND_GROUP))
             if schedule_dict is not None:
                 successLog('New schedule')
