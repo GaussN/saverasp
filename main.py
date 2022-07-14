@@ -3,11 +3,12 @@ import json
 import threading
 from time import sleep
 from get import getSchedule
-from datetime import datetime, date
-from pkg_resources import parse_requirements
+from datetime import date
 from parser import findGroupSchedule
 
-# SUCCESS_CHECK_UPDATE_TIME = 43200   # время сна после удачного обновления расписания
+from log import *
+
+#43200
 SUCCESS_CHECK_UPDATE_TIME = 60 * 5  # время сна после удачного обновления расписания
 FAILURE_CHECK_UPDATE_TIME = 1800  # время сна после неудачного обновления расписания
 FIND_GROUP = 44
@@ -15,15 +16,14 @@ FIND_GROUP = 44
 def main():  
     schedule_old = ''
     while True:
-        now = datetime.now()
         delay_time = 0
 
-        print(f' {now} Сheck schedule update')
+        log('Сheck schedule update')
 
         schedule = getSchedule()
 
         if schedule is None:
-            print(f'\033[101;93m {now} No schedule. Restart the program\033[0m') 
+            errorLog('No schedule. Restart the program') 
             break
         
 
@@ -31,7 +31,7 @@ def main():
             schedule_old = schedule.text
             schedule_dict = findGroupSchedule(schedule, str(FIND_GROUP))
             if schedule_dict is not None:
-                print(f'\033[102;97m {now} New schedule\033[0m')
+                successLog('New schedule')
 
                 schedule_json = json.dumps(schedule_dict, ensure_ascii=False)
                 delay_time = SUCCESS_CHECK_UPDATE_TIME
@@ -39,14 +39,14 @@ def main():
                 # запись в файл
                 with open(f'output/{date.today()}.json', 'w+', encoding='utf-8') as file:
                     file.write(schedule_json)
-                    print(f'\033[1092;97m Schedule successfully written to file\033[0m')
+                    successLog('Schedule successfully written to file')
             else:
-                print('\033[103;97m No schedule found for the selected group\033[0m')
+                warningLog('No schedule found for the selected group')
                 delay_time = FAILURE_CHECK_UPDATE_TIME
 
 
         else:
-            print(now, '\033[3mnothing new\033[0m')
+            log('Nothing new')
             delay_time = FAILURE_CHECK_UPDATE_TIME
 
         sleep(delay_time)

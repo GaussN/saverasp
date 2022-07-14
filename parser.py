@@ -1,10 +1,13 @@
 import re
 import json
-from unicodedata import numeric
 from get import getSchedule
 
-
+#надо проверка расписания на второй день
+#в пятницу постят расписание и на сб и на пн 
 def findGroupSchedule(table, group: str) -> dict or None:
+    if table is None:
+        return None
+    
     result = {}
 
     table_rows = table.findAll('tr')

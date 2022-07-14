@@ -16,7 +16,10 @@ def getSchedule():
 
 
 if __name__ == '__main__':
-    table = getSchedule()
-    print(table)
-    with open('output/timetable.html', 'w+', encoding='utf-8') as file:
-        file.write(table.prettify())
+    try:
+        table = getSchedule()
+        print(table)
+        with open('output/timetable.html', 'w+', encoding='utf-8') as file:
+            file.write(table.prettify())
+    except:
+        pass
