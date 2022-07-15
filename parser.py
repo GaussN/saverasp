@@ -1,6 +1,4 @@
 import re
-import json
-from get import getSchedule
 
 def findGroupSchedule(table, group: str) -> dict or None:
     if table is None:
@@ -22,7 +20,7 @@ def findGroupSchedule(table, group: str) -> dict or None:
                 # после строки с номерами групп идес строка с бесполезным шлаком
                 i += 2
 
-                while (i < len(table_rows)) and (re.search(r'\d{1,2}\.\d{1,2}\.\d{2,4}', table_rows[i].prettify()) is None):
+                while ((i < len(table_rows)) and (re.search(r'\d{1,2}\.\d{1,2}\.\d{2,4}', table_rows[i].prettify()) is None)):
                     table_data = table_rows[i].findAll('td')
                     number = table_data[0::3][column].strong.text.strip()
                     couple = table_data[1::3][column].p.text.strip()
@@ -31,7 +29,7 @@ def findGroupSchedule(table, group: str) -> dict or None:
                     number = number.replace('\n', '')
                     couple = ' '.join(couple.replace('\n', '').split())
                     cabinet = ' '.join(cabinet.replace('\n', '').split())
-                    
+                    #форточки и тд и тп
                     if couple.strip() == '':
                         i += 1
                         continue
@@ -42,12 +40,21 @@ def findGroupSchedule(table, group: str) -> dict or None:
                         j = 0
                         while j < len(subgroups):
                             couple_f = re.search(r'(\d+)\.(.+)\(.+\)(.+)', subgroups[j])
-                            result[number].append({'subgroup': couple_f[1].strip(), "couple": couple_f[2].strip(), "teacher": couple_f[3].strip(), "cabinet": cabinets[j]})
+                            result[number].append({
+                                'subgroup': couple_f[1].strip(), 
+                                "couple": couple_f[2].strip(), 
+                                "teacher": couple_f[3].strip(), 
+                                "cabinet": cabinets[j]}
+                                )
                             j += 1
                     else:
                         couple = re.match(r'(.+)\(.+\)(.+)', couple)
-                        result[number]=[{'subgroup': '0', "couple": couple[1], "teacher": couple[2], "cabinet": cabinet}]
-                        
+                        result[number]=[{
+                            'subgroup': '0', 
+                            "couple": couple[1], 
+                            "teacher": couple[2], 
+                            "cabinet": cabinet}
+                            ]
                     i += 1
                 return result
         i += 1
@@ -57,9 +64,6 @@ def findGroupSchedule(table, group: str) -> dict or None:
 from bs4 import BeautifulSoup as parser
 
 if __name__ == '__main__':
-    #на сайте расписания боольше нет
-    #остается использовать сохраненное  
-    print('.htm')
     with open('output\.htm', 'r', encoding='utf-8') as file:
         table = parser(file.read(), "html.parser").table
         couples = findGroupSchedule(table, '44')
