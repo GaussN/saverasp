@@ -18,7 +18,7 @@ def main():
     while True:
         delay_time = 0
 
-        log('Сheck schedule update')
+        log.log('Сheck schedule update')
         schedule = getSchedule()
         if schedule is None:
             log.errorLog('No schedule. Restart the program')
