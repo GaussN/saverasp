@@ -1,6 +1,7 @@
+import log
 from requests import get
 from bs4 import BeautifulSoup as parser
-
+    
 MGKE = 'http://mgke.minsk.edu.by/ru/main.aspx?guid=3831'
 
 
@@ -10,4 +11,5 @@ def getSchedule():
         soup = parser(response.text, "html.parser")
         return soup.table
     except Exception as e:
-        print('exception: ', e)
+        log.errorLog(f'Module get.py: {e}');
+        raise

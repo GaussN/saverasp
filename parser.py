@@ -9,11 +9,11 @@ def findGroupSchedule(table, group: str) -> dict or None:
     i = 0
 
     while i < len(table_rows):
-        date = re.search(r"\d{1,2}\.\d{1,2}\.\d{2,4}", table_rows[i].prettify())  # поиск даты
+        date = re.search(r'\d{1,2}\.\d{1,2}\.\d{2,4}', table_rows[i].prettify())  # поиск даты
         if date is not None:
             result['date'] = date[0]
             i += 1
-            groups = re.findall(r"<strong>\s*(\d+)", table_rows[i].prettify());
+            groups = re.findall(r'<strong>\s*(\d+)', table_rows[i].prettify());
             if group in groups:
                 # номер колнки с парами группы
                 column = groups.index(group)
@@ -42,19 +42,19 @@ def findGroupSchedule(table, group: str) -> dict or None:
                             couple_f = re.search(r'(\d+)\.(.+)\(.+\)(.+)', subgroups[j])
                             result[number].append({
                                 'subgroup': couple_f[1].strip(), 
-                                "couple": couple_f[2].strip(), 
-                                "teacher": couple_f[3].strip(), 
-                                "cabinet": cabinets[j]}
-                                )
+                                'couple': couple_f[2].strip(), 
+                                'teacher': couple_f[3].strip(), 
+                                'cabinet': cabinets[j]
+                                })
                             j += 1
                     else:
                         couple = re.match(r'(.+)\(.+\)(.+)', couple)
                         result[number]=[{
                             'subgroup': '0', 
-                            "couple": couple[1], 
-                            "teacher": couple[2], 
-                            "cabinet": cabinet}
-                            ]
+                            'couple': couple[1], 
+                            'teacher': couple[2], 
+                            'cabinet': cabinet
+                            }]
                     i += 1
                 return result
         i += 1
@@ -65,6 +65,6 @@ from bs4 import BeautifulSoup as parser
 
 if __name__ == '__main__':
     with open('output\.htm', 'r', encoding='utf-8') as file:
-        table = parser(file.read(), "html.parser").table
+        table = parser(file.read(), 'html.parser').table
         couples = findGroupSchedule(table, '44')
         print(couples)
